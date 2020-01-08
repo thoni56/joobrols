@@ -5,11 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Current File",
+            "name": "main https://events.responsive.se",
             "type": "python",
             "request": "launch",
-            "program": "${file}",
-            "console": "integratedTerminal"
+            "program": "${workspaceRoot}/main.py",
+            "console": "integratedTerminal",
+            "args": ["https://events.responsive.se"]
         }
     ]
 }
