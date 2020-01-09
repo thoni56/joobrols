@@ -4,7 +4,7 @@ from joobrols import Link, Links
 class LinkTests(unittest.TestCase):
     def test_link_has_fields(self):
         link = Link("some url")
-        self.assertEquals(link.url, "some url")
+        self.assertEquals(link.path, "some url")
         self.assertFalse(link.scraped)
 
 class LinksTests(unittest.TestCase):
@@ -22,3 +22,9 @@ class LinksTests(unittest.TestCase):
         self.assertEquals(links.length(), 0)
         links.append("some link")
         self.assertEquals(links.length(), 1)
+
+    def test_can_get_path(self):
+        links = Links("")
+        links.append("some path")
+        self.assertIsNone(links.get("some other path"))
+        self.assertEquals(links.get("some path").path, "some path")
