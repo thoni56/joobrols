@@ -3,9 +3,10 @@ from joobrols import Link, Links
 
 class LinkTests(unittest.TestCase):
     def test_link_has_fields(self):
-        link = Link("some url")
-        self.assertEquals(link.path, "some url")
+        link = Link("some path")
+        self.assertEquals(link.path, "some path")
         self.assertFalse(link.scraped)
+        self.assertFalse(link.broken)
 
 class LinksTests(unittest.TestCase):
     def test_links_has_fields(self):
@@ -36,3 +37,4 @@ class LinksTests(unittest.TestCase):
         links.append("some path")
         self.assertIsNone(links.get("some other path"))
         self.assertEquals(links.get("some path").path, "some path")
+

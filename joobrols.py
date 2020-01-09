@@ -11,6 +11,7 @@ class Link:
     def __init__(self, path):
         self.path = path
         self.scraped = False
+        self.broken = False
 
 class Links:
 
@@ -40,7 +41,7 @@ def scrape_page(site, path):
         return
     else:
         all_links.get(path).scraped = True
-    print("Scraping", path)
+    print(".", end="")
     url = site+path
     page = requests.get(url)
     soup = BeautifulSoup(page.content, 'html.parser')
@@ -48,14 +49,14 @@ def scrape_page(site, path):
     # Check for broken link
     results = soup.find(id='content-area')
     if not results or len(results.contents) == 0:
-        # TODO: mark path as broken
-        print(path, " is empty")
+        all_links.get(path).broken = True
     
     discovered_links = soup.find_all('a')
     for l in discovered_links:
         discovered_url = l.get('href')
         if discovered_url and is_relevant_link(discovered_url):
             scrape_page(site, discovered_url)
+        # TODO Distinguish between pages to be scraped and links that just need checking for existance
 
 def is_relevant_link(discovered_url):
     return not discovered_url.startswith("http") \
@@ -82,3 +83,8 @@ if (__name__ == "__main__"):
 
     scrape_page(site, parsed_url.path)
     print("Scraped", all_links.length(), "paths")
+
+    print("Broken paths:")
+    for link in all_links.links:
+        if link.broken:
+            print("\t", link.path)
