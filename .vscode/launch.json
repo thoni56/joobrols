@@ -8,7 +8,7 @@
             "name": "main https://events.responsive.se",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceRoot}/main.py",
+            "program": "${workspaceRoot}/joobrols.py",
             "console": "integratedTerminal",
             "args": ["https://events.responsive.se"]
         }
