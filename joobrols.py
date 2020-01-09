@@ -21,8 +21,9 @@ class Links:
     def length(self):
         return len(self.links)
 
-    def append(self, url):
-        self.links.append(Link(url))
+    def append(self, path):
+        if not self.get(path):
+            self.links.append(Link(path))
 
     def get(self, path):
         for l in self.links:
@@ -34,9 +35,9 @@ class Links:
 all_links = None
 
 def scrape_page(site, path):
-    if all_links.get(path).scraped():
-        return
     all_links.append(path)
+    if all_links.get(path).scraped:
+        return
     url = site+path
     page = requests.get(url)
     soup = BeautifulSoup(page.content, 'html.parser')
@@ -46,13 +47,13 @@ def scrape_page(site, path):
     if len(results.contents) == 0:
         # TODO: mark path as broken
         print(path, " is empty")
-    else:
-        discovered_links = soup.find_all('a')
-        for l in discovered_links:
-            discovered_url = l.get('href')
-            if is_internal_link(discovered_url):
-                all_links.append(discovered_url)
-    # TODO mark path as scraped
+    
+    discovered_links = soup.find_all('a')
+    for l in discovered_links:
+        discovered_url = l.get('href')
+        if is_internal_link(discovered_url):
+            scrape_page(site, discovered_url)
+    all_links.get(path).scraped = True
 
 def is_internal_link(discovered_url):
     return not discovered_url.startswith("http") and not discovered_url.startswith("#") and not discovered_url.startswith("javascript")

@@ -23,6 +23,14 @@ class LinksTests(unittest.TestCase):
         links.append("some link")
         self.assertEquals(links.length(), 1)
 
+    def test_links_will_not_append_link_twice(self):
+        links = Links("")
+        self.assertEquals(links.length(), 0)
+        links.append("some link")
+        self.assertEquals(links.length(), 1)
+        links.append("some link")
+        self.assertEquals(links.length(), 1)
+
     def test_can_get_path(self):
         links = Links("")
         links.append("some path")
