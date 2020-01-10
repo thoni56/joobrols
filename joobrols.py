@@ -12,6 +12,7 @@ class Link:
         self.path = path
         self.scraped = False
         self.broken = False
+        self.sources = []
 
 class Links:
 

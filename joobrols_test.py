@@ -7,6 +7,7 @@ class LinkTests(unittest.TestCase):
         self.assertEquals(link.path, "some path")
         self.assertFalse(link.scraped)
         self.assertFalse(link.broken)
+        self.assertEquals(len(link.sources), 0)
 
 class LinksTests(unittest.TestCase):
     def test_links_has_fields(self):
