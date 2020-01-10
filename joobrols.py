@@ -24,8 +24,11 @@ class Links:
         return len(self.links)
 
     def append(self, path):
-        if not self.get(path):
-            self.links.append(Link(path))
+        link = self.get(path)
+        if not link:
+            link = Link(path)
+            self.links.append(link)
+        return link
 
     def get(self, path):
         for l in self.links:
