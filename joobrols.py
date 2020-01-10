@@ -67,20 +67,35 @@ def scrape_page(site, path):
         try:
             page = requests.get(path, timeout=10)
             if page.status_code != 200:
+                # TODO handle redirects
+                if verbose:
+                    print("***", "  "*indent, "Broken, status_code = ", page.status_code)
                 link.broken = True
-        except requests.exceptions.Timeout:
+        except:
             link.broken = True
         return
+    else:
+        if verbose:
+            print("***", "  "*indent, "Reading internal link", path)
+        try:
+            page = requests.get(url, timeout=10)
+            if not page:
+                link.broken = True
+                return
+        except TimeoutError:
+            link.broken = True
+            return
 
     if verbose:
-        print("***", "  "*indent, "Reading internal link", path)
-    page = requests.get(url)
+        print("***", "  "*indent, "Content-Type =", page.headers['content-type'])
+    if not page.headers['content-type'].startswith('text/html;'):
+        return
 
     soup = BeautifulSoup(page.content, 'html.parser')
 
     # Check for link to empty page in Joomla
     results = soup.find(id='content-area')
-    if not results or len(results.contents) == 0:
+    if not results or len(results.contents) == 0 or (len(results.contents) == 1 and len(results.contents[0].strip()) == 0):
         link.broken = True
     
     if internal_link(link.path):
@@ -101,8 +116,6 @@ def scrape_page(site, path):
 def is_relevant_link(discovered_url):
     return not discovered_url.startswith("#") \
         and not discovered_url.startswith("javascript") \
-        and not discovered_url.endswith(".pdf") \
-        and not discovered_url.endswith(".jpg") \
         and not discovered_url.endswith("print=1") \
         and not discovered_url.endswith("print=1&layout=default") \
         and not "component/mailto" in discovered_url

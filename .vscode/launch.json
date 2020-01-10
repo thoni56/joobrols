@@ -11,6 +11,14 @@
             "program": "${workspaceRoot}/joobrols.py",
             "console": "integratedTerminal",
             "args": ["https://events.responsive.se"]
+        },
+        {
+            "name": "main https://responsive.se",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/joobrols.py",
+            "console": "integratedTerminal",
+            "args": ["https://responsive.se"]
         }
     ]
 }
