@@ -146,7 +146,7 @@ if (__name__ == "__main__"):
     all_links = Links(site)
 
     if not verbose:
-    print("\nScraped", all_links.length(), "paths")
+        print("\nScraped", all_links.length(), "paths")
     else:
         print("scraped")
 
