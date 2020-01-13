@@ -145,6 +145,7 @@ if (__name__ == "__main__"):
     print("Parsing pages from", site)
     all_links = Links(site)
 
+    scrape_page(site, parsed_url.path)
     if not verbose:
         print("\nScraped", all_links.length(), "paths")
     else:
