@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 
 import requests
+import threading
 from bs4 import BeautifulSoup
 import argparse
 from urllib.parse import urlparse
@@ -19,16 +20,18 @@ class Links:
     def __init__(self, base_url):
         self.base_url = base_url
         self.links = []
+        self.lock = threading.Lock()
 
     def length(self):
         return len(self.links)
 
     def append(self, path):
-        link = self.get(path)
-        if not link:
-            link = Link(path)
-            self.links.append(link)
-        return link
+        with self.lock:
+            link = self.get(path)
+            if not link:
+                link = Link(path)
+                self.links.append(link)
+            return link
 
     def get(self, path):
         for l in self.links:
@@ -36,20 +39,20 @@ class Links:
                 return l
         return None
 
-
 all_links = None
 max_links = 0
 verbose = False
 indent = 0
 
-def scrape_page(site, path):
+def scrape_page_thread(site, path):
     global indent
+    global all_links
+
+    link = all_links.append(path)
     if max_links != 0 and len(all_links.links) > max_links:
         if verbose:
             print("***", "  "*indent, "Ignored because of --max", path)
         return
-
-    link = all_links.append(path)
     if link.scraped:
         if verbose:
             print("***", "  "*indent, "Already scraped", path)
@@ -59,7 +62,8 @@ def scrape_page(site, path):
 
     url = site+path
     if not verbose:
-        print(".", end="", flush=True)
+        #print('\r', len(all_links.links), "links", end="", flush=True)
+        print('.', end="", flush=True)
 
     if not internal_link(path):
         if verbose:
@@ -101,17 +105,20 @@ def scrape_page(site, path):
     if internal_link(link.path):
         discovered_links = soup.find_all('a')
         indent = indent + 1
+        threads = []
         for l in discovered_links:
             discovered_url = l.get('href')
             if discovered_url and is_relevant_link(discovered_url):
                 if verbose:
                     print("***", "  "*indent, "Discovered", discovered_url)
-                scrape_page(site, discovered_url)
+                threads.append(scrape_page(site, discovered_url))
                 link = all_links.get(discovered_url)
                 if link:
                     # Might be ignored because of --max
                     link.sources.append(path)
         indent = indent - 1
+        for t in threads:
+            t.join()
 
 def is_relevant_link(discovered_url):
     return not discovered_url.startswith("#") \
@@ -122,7 +129,13 @@ def is_relevant_link(discovered_url):
 
 def internal_link(discovered_url):
     return not discovered_url.startswith("http")
-        
+
+
+def scrape_page(site, path):
+    t = threading.Thread(target=scrape_page_thread, args=(site, path))
+    t.start()
+    return t
+
 if (__name__ == "__main__"):
 
     argparser = argparse.ArgumentParser(
@@ -145,7 +158,8 @@ if (__name__ == "__main__"):
     print("Parsing pages from", site)
     all_links = Links(site)
 
-    scrape_page(site, parsed_url.path)
+    t = scrape_page(site, parsed_url.path)
+    t.join()
     if not verbose:
         print("\nScraped", all_links.length(), "paths")
     else:
