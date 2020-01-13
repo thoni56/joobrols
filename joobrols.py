@@ -145,8 +145,10 @@ if (__name__ == "__main__"):
     print("Parsing pages from", site)
     all_links = Links(site)
 
-    scrape_page(site, parsed_url.path)
+    if not verbose:
     print("\nScraped", all_links.length(), "paths")
+    else:
+        print("scraped")
 
     broken_links = list(filter(lambda l: l.broken, all_links.links))
     print(len(broken_links), "broken paths found:")
@@ -154,3 +156,5 @@ if (__name__ == "__main__"):
         print("\t", link.path, "found in")
         for source in link.sources:
             print("\t\t", site+source)
+    broken_links = list(filter(lambda l: l.broken, all_links.links))
+    print(len(broken_links), "broken paths found")
