@@ -6,7 +6,7 @@ There are a number of tools to search your site for broken links, including some
 browser plugins that can colour your page.
 
 Joomla (https://joomla.org) is a CMS that makes it easy to manage small to large websites.
-It's routing mechanism is designed to give flexibility. But this flexibility sometimes
+Its routing mechanism is designed to give flexibility. But this flexibility sometimes
 causes the router to not generate a 404 for wrong links. Instead the result is an empty,
 but valid page.
 
