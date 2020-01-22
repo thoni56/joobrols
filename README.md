@@ -7,7 +7,7 @@ browser plugins that can colour your page.
 
 Joomla (https://joomla.org) is a CMS that makes it easy to manage small to large websites.
 Its routing mechanism is designed to give flexibility. But this flexibility sometimes
-causes the router to not generate a 404 for wrong links. Instead the result is an empty,
+causes the router to not generate a 404 for incorrect links. Instead the result is an empty,
 but valid page.
 
 This little program was designed specifically to find those links. It works as most of the
@@ -31,6 +31,6 @@ small dry-run before going the full monty.
 
 ## Miscellanea
 
-It is very slow since it is single threaded and reads every page synchronously. It could
-probably be made a lot faster by putting one page scraping in a separate thread. Merge requests
-are welcome, but it had enough speed for my purpose.
+The implementation is single threaded and reads every page synchronously. It could
+probably be made a lot faster by putting each page scraping in a separate thread. Merge requests
+are welcome, but it has enough speed for my purpose.
